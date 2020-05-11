@@ -3,7 +3,16 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
-
+const username = "amado4884";
+axios
+  .get(`https://api.github.com/users/${username}`)
+  .then((response) => {
+    const cards = document.querySelector(".cards");
+    cards.appendChild(createCard(response.data));
+  })
+  .catch((error) => {
+    console.log("Error", error);
+  });
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +37,27 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell",
+];
+
+followersArray.forEach((follower) => {
+  axios
+    .get(`https://api.github.com/users/${follower}`)
+    .then((response) => {
+      console.log(response.data);
+      userInfo = response.data;
+      const cards = document.querySelector(".cards");
+      cards.appendChild(createCard(response.data));
+    })
+    .catch((error) => {
+      console.log("Error", error);
+    });
+});
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +78,57 @@ const followersArray = [];
       </div>
     </div>
 */
+
+function createCard(git) {
+  const card = document.createElement("div");
+  card.classList.add("card");
+
+  const img = document.createElement("img");
+  img.src = git.avatar_url;
+  card.appendChild(img);
+
+  const cardInfo = document.createElement("div");
+  cardInfo.classList.add("card-info");
+  card.appendChild(cardInfo);
+
+  const h3 = document.createElement("h3");
+  h3.classList.add("name");
+  h3.textContent = git.login !== null ? git.login : "";
+  cardInfo.appendChild(h3);
+
+  const username = document.createElement("p");
+  username.classList.add("username");
+  username.textContent = git.login;
+  cardInfo.appendChild(username);
+
+  const location = document.createElement("p");
+  location.textContent =
+    "Location: " + (git.location !== null ? git.location : "");
+  cardInfo.appendChild(location);
+
+  const profile = document.createElement("p");
+  const url = document.createElement("a");
+  url.href = url.textContent = git.html_url;
+  profile.textContent = "Profile: ";
+  profile.appendChild(url);
+  cardInfo.appendChild(profile);
+
+  const followers = document.createElement("p");
+  followers.textContent =
+    "Followers: " + (git.followers !== null ? git.followers : "");
+  cardInfo.appendChild(followers);
+
+  const following = document.createElement("p");
+  following.textContent =
+    "Following: " + (git.following !== null ? git.following : "");
+  cardInfo.appendChild(following);
+
+  const bio = document.createElement("p");
+  bio.textContent = "Bio: " + (git.bio !== null ? git.bio : "");
+  cardInfo.appendChild(bio);
+
+  return card;
+}
 
 /*
   List of LS Instructors Github username's:
